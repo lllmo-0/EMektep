@@ -21,7 +21,7 @@ class _CardsPageState extends State<CardsPage>
   DateTime selectedCardDate = DateTime.now();
 
   // Permissions tab variables
-  String selectedPermissionType = 'Techs';
+  String selectedPermissionType = 'Phone or laptop';
   String selectedPermissionRecipient = 'Student';
   DateTime selectedPermissionDate = DateTime.now();
 
