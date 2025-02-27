@@ -21,7 +21,7 @@ class _CardsPageState extends State<CardsPage>
   DateTime selectedCardDate = DateTime.now();
 
   // Permissions tab variables
-  String selectedPermissionType = 'Phone or laptop';
+  String selectedPermissionType = 'Phone';
   String selectedPermissionRecipient = 'Student';
   DateTime selectedPermissionDate = DateTime.now();
 
@@ -227,8 +227,12 @@ class _CardsPageState extends State<CardsPage>
               contentPadding:
                   const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             ),
-            items: ['Techs', 'Exemption from classes', 'Exiting school']
-                .map((String type) {
+            items: [
+              'Phone',
+              'Laptop',
+              'Exemption from classes',
+              'Exiting school'
+            ].map((String type) {
               return DropdownMenuItem<String>(
                 value: type,
                 child: Text(type),
