@@ -13,7 +13,7 @@ class CardsPage extends StatefulWidget {
 class _CardsPageState extends State<CardsPage>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
-  final Color primaryColor = const Color(0xFF192B50);
+  final Color primaryColor = const Color.fromARGB(255, 42, 79, 153);
 
   // Cards tab variables
   String selectedCardType = 'Red';
