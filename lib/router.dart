@@ -1,4 +1,5 @@
 import 'package:emektep/pages/home.dart';
+import 'package:emektep/pages/loginpage.dart';
 import 'package:emektep/service/pocketbase_service.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -56,6 +57,8 @@ final router = GoRouter(
               pageBuilder: (context, state) =>
                   noTransitionPageBuilder(context, state, CardsPage()),
             ),
+            GoRoute(
+                path: '/login', builder: (context, state) => const LoginPage())
             // GoRoute(
             //   path: '/cards',
             //   parentNavigatorKey: _shellKey,
