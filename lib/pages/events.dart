@@ -51,59 +51,22 @@ class _EventsNewsPageState extends State<EventsNewsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
-        children: [
-          Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  Color(0xFF007E86),
-                  Color(0xFF192B50),
-                  Color(0xFF000000),
-                ],
-              ),
-            ),
-            child: CustomScrollView(
-              controller: _scrollController,
-              slivers: [
-                SliverAppBar(
-                  title: Text(
-                    'EMektep',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  backgroundColor: Color.fromARGB(255, 12, 13, 13)
-                      .withOpacity(_appBarOpacity),
-                  floating: false,
-                  pinned: true,
-                  expandedHeight: 60.0,
-                  actions: <Widget>[
-                    Icon(
-                      Icons.add, // Иконка суммы
-                      size: 30, // Размер иконки
-                      color: Colors.white, // Белый цвет
-                    ),
-                  ],
-                ),
-                SliverList(
-                  delegate: SliverChildBuilderDelegate(
-                    (context, index) {
-                      return EventCard(
-                        imageUrl: events[index]['image']!,
-                        description: events[index]['description']!,
-                        date: events[index]['date']!,
-                      );
-                    },
-                    childCount: events.length,
-                  ),
-                ),
-              ],
-            ),
+        appBar: AppBar(
+          title: Text("E-Mektep"),
+        ),
+        body: SafeArea(
+            child: SingleChildScrollView(
+          padding: EdgeInsets.fromLTRB(12, 12, 12, 60),
+          child: Column(
+            children: events
+                .map((e) => EventCard(
+                      imageUrl: e['image']!,
+                      description: e['description']!,
+                      date: e['date']!,
+                    ))
+                .toList(),
           ),
-        ],
-      ),
-    );
+        )));
   }
 }
 
