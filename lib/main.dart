@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:emektep/router.dart';
 
-void main() {
+import 'service/pocketbase_service.dart';
+
+void main() async {
+  await pocketBaseService.initAuth();
+
   runApp(const MyApp());
 }
 

@@ -57,8 +57,7 @@ final router = GoRouter(
               pageBuilder: (context, state) =>
                   noTransitionPageBuilder(context, state, CardsPage()),
             ),
-            GoRoute(
-                path: '/login', builder: (context, state) => const LoginPage())
+
             // GoRoute(
             //   path: '/cards',
             //   parentNavigatorKey: _shellKey,
@@ -74,4 +73,5 @@ final router = GoRouter(
             //   },
             // )
           ]),
+      GoRoute(path: '/login', builder: (context, state) => const LoginPage())
     ]);

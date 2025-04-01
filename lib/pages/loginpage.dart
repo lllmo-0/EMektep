@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import '../service/pocketbase_service.dart';
 
@@ -117,7 +116,7 @@ class _LoginPageState extends State<LoginPage> {
                       obscureText: true,
                       style: const TextStyle(color: Colors.black),
                       decoration: const InputDecoration(
-                        hintText: 'turansuperagaichikpl5ppostovte!',
+                        hintText: 'Password',
                         hintStyle: TextStyle(
                           color: Colors.black54,
                         ),
