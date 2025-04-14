@@ -48,18 +48,14 @@
 //   }
 // }
 
+import 'package:emektep/pages/cards.dart';
 import 'package:flutter/material.dart';
 import 'package:pocketbase/pocketbase.dart';
 import 'package:emektep/pages/reports.dart';
 
 class HomePage extends StatelessWidget {
-  final PocketBase pb;
-  final RecordModel currentUser;
-
   const HomePage({
     Key? key,
-    required this.pb,
-    required this.currentUser,
   }) : super(key: key);
 
   @override
@@ -209,10 +205,7 @@ class HomePage extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => ReportFormPage(
-                            pb: pb,
-                            currentUser: currentUser,
-                          ),
+                          builder: (context) => ReportFormPage(),
                         ),
                       );
                     },

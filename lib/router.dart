@@ -103,10 +103,7 @@ final GoRouter router = GoRouter(
   routes: [
     GoRoute(
       path: '/',
-      builder: (context, state) => HomePage(
-        pb: pocketBaseService.pb,
-        currentUser: pocketBaseService.pb.authStore.model,
-      ),
+      builder: (context, state) => HomePage(),
     ),
     GoRoute(
       path: '/login',

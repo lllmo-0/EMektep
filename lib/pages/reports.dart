@@ -1,16 +1,13 @@
 import 'dart:io';
+import 'package:emektep/service/pocketbase_service.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:pocketbase/pocketbase.dart';
+import 'package:http/http.dart' as http;
 
 class ReportFormPage extends StatefulWidget {
-  final PocketBase pb;
-  final RecordModel currentUser;
-
   const ReportFormPage({
     Key? key,
-    required this.pb,
-    required this.currentUser,
   }) : super(key: key);
 
   @override
@@ -21,37 +18,16 @@ class _ReportFormPageState extends State<ReportFormPage> {
   File? _selectedImage;
   String _description = '';
   String _selectedType = '';
-  List<String> _typeOptions = [];
+  List<String> _typeOptions = ['class', 'wc', 'dormitory', 'outside', 'others'];
   bool _isSubmitting = false;
   bool _showSuccessOverlay = false;
-  
+
   final _formKey = GlobalKey<FormState>();
   final ImagePicker _picker = ImagePicker();
 
   @override
   void initState() {
     super.initState();
-    _fetchTypeOptions();
-  }
-
-  Future<void> _fetchTypeOptions() async {
-    try {
-      // Fetch the collection schema to get the select options for 'type' field
-      final collection = await widget.pb.collections.getOne('emektep_reports');
-      final typeField = collection.schema.firstWhere((field) => field.name == 'type');
-      
-      // Extract options from the select field
-      setState(() {
-        _typeOptions = List<String>.from(typeField.options['values'] ?? []);
-        if (_typeOptions.isNotEmpty) {
-          _selectedType = _typeOptions.first;
-        }
-      });
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to load report types: $e')),
-      );
-    }
   }
 
   Future<void> _pickImage(ImageSource source) async {
@@ -72,7 +48,8 @@ class _ReportFormPageState extends State<ReportFormPage> {
   Future<void> _submitReport() async {
     if (!_formKey.currentState!.validate() || _selectedImage == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please fill all required fields and add a photo')),
+        const SnackBar(
+            content: Text('Please fill all required fields and add a photo')),
       );
       return;
     }
@@ -81,49 +58,27 @@ class _ReportFormPageState extends State<ReportFormPage> {
       _isSubmitting = true;
     });
 
-    try {
-      // Create form data to upload the image and other fields
-      final formData = FormData()
-        ..add('user', widget.currentUser.id)
-        ..add('type', _selectedType)
-        ..add('description', _description)
-        ..add('status', 'pending');
-
-      // Add image file
-      if (_selectedImage != null) {
-        formData.addFile(
-          'img_before', 
-          await MultipartFile.fromPath('image', _selectedImage!.path)
-        );
-      }
-
-      // Submit to PocketBase
-      await widget.pb.collection('emektep_reports').create(body: formData);
-      
-      // Show success overlay
-      setState(() {
-        _isSubmitting = false;
-        _showSuccessOverlay = true;
-      });
-
-      // Hide success overlay after a delay
-      Future.delayed(const Duration(seconds: 2), () {
-        if (mounted) {
-          setState(() {
-            _showSuccessOverlay = false;
-          });
-          // Return to home page after success
-          Navigator.of(context).pop();
-        }
-      });
-    } catch (e) {
+    final record =
+        await pocketBaseService.pb.collection('emektep_reports').create(
+      body: {
+        "user": "!!!user_id!!!",
+        "type": "class",
+        "date_end": "2022-01-01 10:00:00.123Z",
+        "description": "test",
+        "status": "pending"
+      },
+      files: [
+        http.MultipartFile.fromString(
+          'documents',
+          'example content 1...',
+          filename: _selectedImage!.path,
+        ),
+      ],
+    ).then((e) {
       setState(() {
         _isSubmitting = false;
       });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to submit report: $e')),
-      );
-    }
+    });
   }
 
   @override
@@ -141,7 +96,8 @@ class _ReportFormPageState extends State<ReportFormPage> {
             const SizedBox(width: 8),
             const Text(
               'Fast report',
-              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+              style:
+                  TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
             ),
           ],
         ),
@@ -172,16 +128,20 @@ class _ReportFormPageState extends State<ReportFormPage> {
                         builder: (context) => Wrap(
                           children: [
                             ListTile(
-                              leading: const Icon(Icons.photo_library, color: Colors.white),
-                              title: const Text('Gallery', style: TextStyle(color: Colors.white)),
+                              leading: const Icon(Icons.photo_library,
+                                  color: Colors.white),
+                              title: const Text('Gallery',
+                                  style: TextStyle(color: Colors.white)),
                               onTap: () {
                                 Navigator.pop(context);
                                 _pickImage(ImageSource.gallery);
                               },
                             ),
                             ListTile(
-                              leading: const Icon(Icons.camera_alt, color: Colors.white),
-                              title: const Text('Camera', style: TextStyle(color: Colors.white)),
+                              leading: const Icon(Icons.camera_alt,
+                                  color: Colors.white),
+                              title: const Text('Camera',
+                                  style: TextStyle(color: Colors.white)),
                               onTap: () {
                                 Navigator.pop(context);
                                 _pickImage(ImageSource.camera);
@@ -230,8 +190,8 @@ class _ReportFormPageState extends State<ReportFormPage> {
                       child: DropdownButton<String>(
                         isExpanded: true,
                         dropdownColor: Colors.grey[800],
-                        value: _selectedType.isEmpty && _typeOptions.isNotEmpty 
-                            ? _typeOptions.first 
+                        value: _selectedType.isEmpty && _typeOptions.isNotEmpty
+                            ? _typeOptions.first
                             : _selectedType,
                         items: _typeOptions.map((String value) {
                           return DropdownMenuItem<String>(
@@ -247,7 +207,8 @@ class _ReportFormPageState extends State<ReportFormPage> {
                             _selectedType = newValue!;
                           });
                         },
-                        icon: const Icon(Icons.arrow_drop_down, color: Colors.white),
+                        icon: const Icon(Icons.arrow_drop_down,
+                            color: Colors.white),
                         style: const TextStyle(color: Colors.white),
                       ),
                     ),
@@ -267,7 +228,8 @@ class _ReportFormPageState extends State<ReportFormPage> {
                       maxLines: 4,
                       style: const TextStyle(color: Colors.white),
                       decoration: const InputDecoration(
-                        hintText: 'Сообщите о вашей проблеме с помощью Fast Report!',
+                        hintText:
+                            'Сообщите о вашей проблеме с помощью Fast Report!',
                         hintStyle: TextStyle(color: Colors.grey),
                         border: InputBorder.none,
                         contentPadding: EdgeInsets.all(16),
@@ -298,7 +260,8 @@ class _ReportFormPageState extends State<ReportFormPage> {
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.green,
                 foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(30),
                 ),
